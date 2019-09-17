@@ -12,10 +12,14 @@ import VueRouter from 'vue-router';
 Vue.use(VueRouter);
 
 let routes = [
-    {path: '/dashboard', component: require('./components/Dashboard.vue')},
-    {path: '/profile', component: require('./components/Profile.vue')},
+    {path: '/dashboard', component: require('./components/Dashboard.vue').default},
+    {path: '/profile', component: require('./components/Profile.vue').default},
 ]
 
+const router = new VueRouter({
+    mode: 'history',
+    routes // short for 'routes': 'route'
+})
 
 /**
  * The following block of code may be used to automatically register your
@@ -38,4 +42,5 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 
 const app = new Vue({
     el: '#app',
+    router,
 });
