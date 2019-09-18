@@ -8,15 +8,29 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 
-import { Form, HasError, AlertError } from 'vform';
+// Adding moment
+import moment from 'moment';
 
+// Adding vform
+import { Form, HasError, AlertError } from 'vform';
 Vue.component(HasError.name, HasError)
 Vue.component(AlertError.name, AlertError)
 window.Form = Form;
 
+// Adding vue router
 import VueRouter from 'vue-router';
+import { Verify, createDecipher } from 'crypto';
 Vue.use(VueRouter);
 
+// Vue progressbar
+import VueProgressBar from 'vue-progressbar'
+Vue.use(VueProgressBar, {
+    color:'rgb(143,255,199)',
+    failedColor: 'red',
+    height: '3px'
+});
+
+// Vue routes
 let routes = [
     {path: '/dashboard', component: require('./components/Dashboard.vue').default},
     {path: '/profile', component: require('./components/Profile.vue').default},
@@ -26,6 +40,15 @@ let routes = [
 const router = new VueRouter({
     mode: 'history',
     routes // short for 'routes': 'route'
+})
+
+// Vue filters
+Vue.filter('upText', function(text) {
+    return text.toUpperCase();
+});
+
+Vue.filter('date', function(date) {
+    return moment(date).format('L');
 })
 
 /**

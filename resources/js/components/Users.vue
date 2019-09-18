@@ -21,25 +21,25 @@
                       <th>ID</th>
                       <th>Name</th>
                       <th>Email</th>
-                      <th>Type</th>
+                      <th>Created at</th>
                       <th>Modify</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>183</td>
-                      <td>John Doe</td>
-                      <td>11-7-2014</td>
-                      <td><span class="tag tag-success">Approved</span></td>
-                      <td>
-                          <a class="btn" href="">
+                    <tr v-for="user in users" :key="user.id">
+                        <td>{{user.id}}</td>
+                        <td>{{user.name}}</td>
+                        <td>{{user.email}}</td>
+                        <td>{{user.created_at|date}}</td>
+                        <td>
+                            <a class="btn" href="">
                               <i class="fa fa-edit color-blue"></i>
                           </a>
                           /
                           <a class="btn" href="">
                               <i class="fa fa-trash color-red"></i>
                           </a>
-                      </td>
+                        </td>
                     </tr>
                   </tbody>
                 </table>
@@ -97,6 +97,7 @@
     export default {
         data() {
             return {
+                users: [],
                 form: new Form( {
                     name: '',
                     email: '',
@@ -105,12 +106,21 @@
             }
         },
         methods: {
+            loadUsers() {
+                // Does a get request to api/user (here redirected to api/user/index) which returns all users
+                // then puts the data in the users variable we defined above
+                // To get the content (the object) of the data we must do data.data 
+                axios.get("api/user").then(({data}) => (this.users = data.data));
+            },
+
             createUser() {
+                this.$Progress.start();
                 this.form.post('api/user');
+                this.$Progress.finish();
             }
         },
         mounted() {
-            console.log('Component mounted.');
+            this.loadUsers();
         }
     }
 </script>
