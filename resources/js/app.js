@@ -11,6 +11,19 @@ window.Vue = require('vue');
 // Adding moment
 import moment from 'moment';
 
+// Adding sweetAlert
+import swal from 'sweetalert2';
+window.swal = swal;
+
+const Toast = swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000
+});
+
+window.Toast = Toast;
+
 // Adding vform
 import { Form, HasError, AlertError } from 'vform';
 Vue.component(HasError.name, HasError)
