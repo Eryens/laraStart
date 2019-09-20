@@ -52,12 +52,13 @@
         </div>
 
         <!-- Modal -->
-        <form @submit.prevent="createUser">
+        <form @submit.prevent="editMode ? updateUser() : createUser()">
             <div class="modal fade" id="addNew" tabindex="-1" role="dialog" aria-labelledby="addNewLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="addNewLabel">Modal title</h5>
+                        <h5 v-show="!editMode" class="modal-title" id="addNewLabel">Create a user</h5>
+                        <h5 v-show="editMode" class="modal-title" id="addNewLabel">Edit a user</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                         </button>
@@ -85,7 +86,8 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Create</button>
+                        <button v-show="!editMode" type="submit" class="btn btn-primary">Create</button>
+                        <button v-show="editMode" type="submit" class="btn btn-primary">Update</button>
                     </div>
                     </div>
                 </div>
@@ -105,19 +107,23 @@
                     password: '',
                 }),
                 currentUserId: this.$userId,
-                editMode: true,
+                editMode: false,
             }
         },
         methods: {
 
             OpenCreateModal() {
-                this.form.reset(); // resets the field of the form from vform
+                this.editMode = false;
+                this.form.clear(); // resets the field of the form from vform
+                this.form.reset();
                 $('#addNew').modal('show');
             },
 
             
             OpenEditModal(user) {
-                this.form.reset(); // resets the field of the form from vform
+                this.editMode = true;
+                this.form.clear(); // resets the field of the form from vform
+                this.form.reset();
                 this.form.fill(user); // whaaat vform is op
                 $('#addNew').modal('show');
             },
@@ -146,8 +152,12 @@
                 }).catch(e => {
                     console.log(e);
                     
-                    this.$Progress.error();
+                    this.$Progress.fail();
                 });
+            },
+
+            updateUser() {
+                console.log('i got clicked !');
             },
 
             deleteUser(id) {
