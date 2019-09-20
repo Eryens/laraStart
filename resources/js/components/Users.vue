@@ -102,6 +102,7 @@
             return {
                 users: [],
                 form: new Form( {
+                    id: '',
                     name: '',
                     email: '',
                     password: '',
@@ -156,8 +157,18 @@
                 });
             },
 
-            updateUser() {
-                console.log('i got clicked !');
+            updateUser(id) {
+                this.$Progress.start();
+
+                this.form.put('api/user/'+this.form.id).then(() => {
+                    this.$Progress.finish();
+                    $('#addNew').modal('hide');
+                    Fire.$emit('TableUpdate');
+                })
+                .catch(() => {
+                    this.$Progress.fail();
+
+                });
             },
 
             deleteUser(id) {

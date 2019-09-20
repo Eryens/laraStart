@@ -3916,6 +3916,7 @@ __webpack_require__.r(__webpack_exports__);
     return {
       users: [],
       form: new Form({
+        id: '',
         name: '',
         email: '',
         password: ''
@@ -3972,11 +3973,21 @@ __webpack_require__.r(__webpack_exports__);
         _this2.$Progress.fail();
       });
     },
-    updateUser: function updateUser() {
-      console.log('i got clicked !');
+    updateUser: function updateUser(id) {
+      var _this3 = this;
+
+      this.$Progress.start();
+      this.form.put('api/user/' + this.form.id).then(function () {
+        _this3.$Progress.finish();
+
+        $('#addNew').modal('hide');
+        Fire.$emit('TableUpdate');
+      })["catch"](function () {
+        _this3.$Progress.fail();
+      });
     },
     deleteUser: function deleteUser(id) {
-      var _this3 = this;
+      var _this4 = this;
 
       swal.fire({
         title: 'Are you sure?',
@@ -3988,7 +3999,7 @@ __webpack_require__.r(__webpack_exports__);
         confirmButtonText: 'Yes, delete it!'
       }).then(function (result) {
         // Send to server   
-        _this3.form["delete"]('api/user/' + id).then(function () {
+        _this4.form["delete"]('api/user/' + id).then(function () {
           if (result.value) {
             swal.fire('Deleted!', 'Your file has been deleted.', 'success');
             Fire.$emit('TableUpdate');
@@ -4002,12 +4013,12 @@ __webpack_require__.r(__webpack_exports__);
   },
   // created
   mounted: function mounted() {
-    var _this4 = this;
+    var _this5 = this;
 
     console.log(this.$userId);
     this.loadUsers();
     Fire.$on('TableUpdate', function () {
-      _this4.loadUsers();
+      _this5.loadUsers();
     });
   }
 });
