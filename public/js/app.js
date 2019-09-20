@@ -3908,6 +3908,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -3916,10 +3917,24 @@ __webpack_require__.r(__webpack_exports__);
         name: '',
         email: '',
         password: ''
-      })
+      }),
+      currentUserId: this.$userId,
+      editMode: true
     };
   },
   methods: {
+    OpenCreateModal: function OpenCreateModal() {
+      this.form.reset(); // resets the field of the form from vform
+
+      $('#addNew').modal('show');
+    },
+    OpenEditModal: function OpenEditModal(user) {
+      this.form.reset(); // resets the field of the form from vform
+
+      this.form.fill(user); // whaaat vform is op
+
+      $('#addNew').modal('show');
+    },
     loadUsers: function loadUsers() {
       var _this = this;
 
@@ -3936,9 +3951,9 @@ __webpack_require__.r(__webpack_exports__);
 
       this.$Progress.start();
       this.form.post('api/user').then(function () {
-        _this2.loadUsers();
+        $('#addNew').modal('hide'); // Registers an event that can be used everywhere in the app
 
-        $('#addNew').modal('hide');
+        Fire.$emit('TableUpdate');
         Toast.fire({
           type: 'success',
           title: 'User created successfully'
@@ -3950,10 +3965,41 @@ __webpack_require__.r(__webpack_exports__);
 
         _this2.$Progress.error();
       });
+    },
+    deleteUser: function deleteUser(id) {
+      var _this3 = this;
+
+      swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then(function (result) {
+        // Send to server   
+        _this3.form["delete"]('api/user/' + id).then(function () {
+          if (result.value) {
+            swal.fire('Deleted!', 'Your file has been deleted.', 'success');
+            Fire.$emit('TableUpdate');
+          }
+        })["catch"](function (error) {
+          swal.fire('Attention gamers!', 'Something went wrong', 'warning');
+          console.log(error);
+        });
+      });
     }
   },
+  // created
   mounted: function mounted() {
+    var _this4 = this;
+
+    console.log(this.$userId);
     this.loadUsers();
+    Fire.$on('TableUpdate', function () {
+      _this4.loadUsers();
+    });
   }
 });
 
@@ -82040,11 +82086,27 @@ var render = function() {
     _c("div", { staticClass: "row" }, [
       _c("div", { staticClass: "col-md-12" }, [
         _c("div", { staticClass: "card" }, [
-          _vm._m(0),
+          _c("div", { staticClass: "card-header" }, [
+            _c("h3", { staticClass: "card-title" }, [_vm._v("Users Table")]),
+            _vm._v(" "),
+            _c("div", { staticClass: "card-tools" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-success",
+                  on: { click: _vm.OpenCreateModal }
+                },
+                [
+                  _vm._v("\n                    Add new\n                    "),
+                  _c("i", { staticClass: "fas fa-user-plus" })
+                ]
+              )
+            ])
+          ]),
           _vm._v(" "),
           _c("div", { staticClass: "card-body table-responsive p-0" }, [
             _c("table", { staticClass: "table table-hover" }, [
-              _vm._m(1),
+              _vm._m(0),
               _vm._v(" "),
               _c(
                 "tbody",
@@ -82058,7 +82120,37 @@ var render = function() {
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(_vm._f("date")(user.created_at)))]),
                     _vm._v(" "),
-                    _vm._m(2, true)
+                    _c("td", [
+                      _c(
+                        "a",
+                        {
+                          staticClass: "btn",
+                          on: {
+                            click: function($event) {
+                              return _vm.OpenEditModal(user)
+                            }
+                          }
+                        },
+                        [_c("i", { staticClass: "fa fa-edit color-blue" })]
+                      ),
+                      _vm._v(
+                        "\n                      /\n                      \n                      "
+                      ),
+                      user.id != _vm.currentUserId
+                        ? _c(
+                            "a",
+                            {
+                              staticClass: "btn",
+                              on: {
+                                click: function($event) {
+                                  return _vm.deleteUser(user.id)
+                                }
+                              }
+                            },
+                            [_c("i", { staticClass: "fa fa-trash color-red" })]
+                          )
+                        : _vm._e()
+                    ])
                   ])
                 }),
                 0
@@ -82101,7 +82193,7 @@ var render = function() {
               },
               [
                 _c("div", { staticClass: "modal-content" }, [
-                  _vm._m(3),
+                  _vm._m(1),
                   _vm._v(" "),
                   _c("div", { staticClass: "modal-body" }, [
                     _c(
@@ -82225,7 +82317,7 @@ var render = function() {
                     )
                   ]),
                   _vm._v(" "),
-                  _vm._m(4)
+                  _vm._m(2)
                 ])
               ]
             )
@@ -82236,28 +82328,6 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-header" }, [
-      _c("h3", { staticClass: "card-title" }, [_vm._v("Users Table")]),
-      _vm._v(" "),
-      _c("div", { staticClass: "card-tools" }, [
-        _c(
-          "button",
-          {
-            staticClass: "btn btn-success",
-            attrs: { "data-toggle": "modal", "data-target": "#addNew" }
-          },
-          [
-            _vm._v("\n                    Add new\n                    "),
-            _c("i", { staticClass: "fas fa-user-plus" })
-          ]
-        )
-      ])
-    ])
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -82273,20 +82343,6 @@ var staticRenderFns = [
         _c("th", [_vm._v("Created at")]),
         _vm._v(" "),
         _c("th", [_vm._v("Modify")])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("td", [
-      _c("a", { staticClass: "btn", attrs: { href: "" } }, [
-        _c("i", { staticClass: "fa fa-edit color-blue" })
-      ]),
-      _vm._v("\n                      /\n                      "),
-      _c("a", { staticClass: "btn", attrs: { href: "" } }, [
-        _c("i", { staticClass: "fa fa-trash color-red" })
       ])
     ])
   },
@@ -97463,6 +97519,9 @@ Vue.filter('upText', function (text) {
 Vue.filter('date', function (date) {
   return moment__WEBPACK_IMPORTED_MODULE_0___default()(date).format('L');
 });
+window.Fire = new Vue(); // Tells vue what the user id is
+
+Vue.prototype.$userId = document.querySelector("meta[name='user-id']").getAttribute('content');
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue

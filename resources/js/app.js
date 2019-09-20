@@ -62,7 +62,12 @@ Vue.filter('upText', function(text) {
 
 Vue.filter('date', function(date) {
     return moment(date).format('L');
-})
+});
+
+window.Fire = new Vue();
+
+// Tells vue what the user id is
+Vue.prototype.$userId = document.querySelector("meta[name='user-id']").getAttribute('content');
 
 /**
  * The following block of code may be used to automatically register your

@@ -14,6 +14,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
   <!-- CSRF Token -->
   <meta name="csrf-token" content="{{ csrf_token() }}">
+  @if(Auth::check()) <meta name="user-id" content="{{ Auth::user()->id }}"> @endif
 
   <!-- CSS -->
   <link rel="stylesheet" href="/css/app.css">

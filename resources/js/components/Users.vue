@@ -7,7 +7,7 @@
                 <h3 class="card-title">Users Table</h3>
 
                 <div class="card-tools">
-                    <button class="btn btn-success" data-toggle="modal" data-target="#addNew">
+                    <button class="btn btn-success" @click="OpenCreateModal">
                         Add new
                         <i class="fas fa-user-plus"></i>
                     </button>
@@ -32,11 +32,12 @@
                         <td>{{user.email}}</td>
                         <td>{{user.created_at|date}}</td>
                         <td>
-                            <a class="btn" href="">
+                            <a class="btn" @click="OpenEditModal(user)">
                               <i class="fa fa-edit color-blue"></i>
                           </a>
                           /
-                          <a class="btn" href="">
+                          
+                          <a v-if="user.id != currentUserId"  class="btn" @click="deleteUser(user.id)">
                               <i class="fa fa-trash color-red"></i>
                           </a>
                         </td>
@@ -102,10 +103,25 @@
                     name: '',
                     email: '',
                     password: '',
-                })
+                }),
+                currentUserId: this.$userId,
+                editMode: true,
             }
         },
         methods: {
+
+            OpenCreateModal() {
+                this.form.reset(); // resets the field of the form from vform
+                $('#addNew').modal('show');
+            },
+
+            
+            OpenEditModal(user) {
+                this.form.reset(); // resets the field of the form from vform
+                this.form.fill(user); // whaaat vform is op
+                $('#addNew').modal('show');
+            },
+            
             loadUsers() {
                 // Does a get request to api/user (here redirected to api/user/index) which returns all users
                 // then puts the data in the users variable we defined above
@@ -117,8 +133,10 @@
                 this.$Progress.start();
                 this.form.post('api/user').then(() => 
                 {
-                    this.loadUsers();
                     $('#addNew').modal('hide');
+                    
+                    // Registers an event that can be used everywhere in the app
+                    Fire.$emit('TableUpdate');
 
                     Toast.fire({
                         type: 'success',
@@ -127,12 +145,57 @@
                     this.$Progress.finish();
                 }).catch(e => {
                     console.log(e);
+                    
                     this.$Progress.error();
                 });
-            }
+            },
+
+            deleteUser(id) {
+                swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+
+                    // Send to server   
+                    this.form.delete('api/user/'+id).then(() => 
+                    {
+                        if (result.value) 
+                        {
+                            swal.fire(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                            );
+                            
+                            Fire.$emit('TableUpdate');
+                        }
+                    }).catch((error) => {
+                        swal.fire(
+                            'Attention gamers!',
+                            'Something went wrong',
+                            'warning'
+                            );
+                        console.log(error);
+                    });
+
+                    
+                })
+            },
         },
+        // created
         mounted() {
+            console.log(this.$userId)
+
             this.loadUsers();
+
+            Fire.$on('TableUpdate', () => {
+                this.loadUsers();
+            });
         }
     }
 </script>
